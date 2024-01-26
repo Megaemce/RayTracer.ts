@@ -2,16 +2,17 @@
  * Represents a 3-dimensional vector.
  */
 class Vector3 {
-    x: number;
-    y: number;
-    z: number;
     /**
      * Creates an instance of Vector3.
      * @param {number} [x=0] - The x component of the vector.
      * @param {number} [y=0] - The y component of the vector.
      * @param {number} [z=0] - The z component of the vector.
      */
-    constructor(x: number = 0, y: number = 0, z: number = 0) {
+    constructor(
+        public x: number = 0,
+        public y: number = 0,
+        public z: number = 0
+    ) {
         this.x = x;
         this.y = y;
         this.z = z;

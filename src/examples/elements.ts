@@ -1,6 +1,18 @@
 import Material from "../Material.js";
+import RayTracer from "../RayTracer.js";
+import Scene from "../Scene.js";
 import Sphere from "../Sphere.js";
 import Vector3 from "../Vector3.js";
+
+/** DOM ELEMENTS */
+export const canvas = document.getElementById(
+    "resultCanvas"
+) as HTMLCanvasElement;
+export const contex = canvas.getContext("2d") as CanvasRenderingContext2D;
+export const resultDiv = document.getElementById("resultDiv") as HTMLDivElement;
+export const startButton = document.getElementById(
+    "startButtonId"
+) as HTMLButtonElement;
 
 export const sphere0 = new Sphere(
     new Vector3(0.0, -10004, -20),
@@ -37,3 +49,15 @@ export const sphere5 = new Sphere(
     3,
     new Material(new Vector3(), 0, 0, new Vector3(1, 1, 1))
 );
+
+export const backgroundColor = new Vector3(2.0, 2.0, 2.0);
+export const scene = new Scene();
+scene.add(sphere0);
+scene.add(sphere1);
+scene.add(sphere2);
+scene.add(sphere3);
+scene.add(sphere4);
+scene.add(light);
+scene.add(sphere5);
+
+export const rayTracer = new RayTracer(backgroundColor, scene); // create ray tracer

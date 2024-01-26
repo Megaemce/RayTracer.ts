@@ -1,22 +1,19 @@
-import Scene from "../Scene.js";
 import Vector3 from "../Vector3.js";
 import RenderPlanner from "../RenderPlanner.js";
 import {
-    sphere0,
     sphere1,
     sphere2,
     sphere3,
     sphere4,
     light,
-    sphere5,
+    scene,
+    backgroundColor,
+    canvas,
+    contex,
+    resultDiv,
+    startButton,
 } from "./elements.js";
 
-const backgroundColor = new Vector3(2.0, 2.0, 2.0);
-const resultDiv = document.getElementById("resultDiv")!;
-const canvas = document.getElementById("resultCanvas") as HTMLCanvasElement;
-const ctx = canvas.getContext("2d")!;
-const canvasWidth = canvas.width;
-const canvasHeight = canvas.height;
 const workerCount = 8;
 const bufferPieces: {
     buffer: Uint8ClampedArray;
@@ -24,25 +21,15 @@ const bufferPieces: {
     height: number;
 }[] = [];
 
-const scene = new Scene();
-
 let startTime = Date.now();
 let frameCount = 0;
-
-scene.add(sphere0);
-scene.add(sphere1);
-scene.add(sphere2);
-scene.add(sphere3);
-scene.add(sphere4);
-scene.add(light);
-scene.add(sphere5);
 
 const renderPlanner = new RenderPlanner(
     workerCount,
     scene,
     backgroundColor,
-    canvasWidth,
-    canvasHeight
+    canvas.width,
+    canvas.height
 );
 
 renderPlanner.onUpdateReceived = (sectionStart, sectionHeight, buf8) => {
@@ -54,14 +41,14 @@ renderPlanner.onUpdateReceived = (sectionStart, sectionHeight, buf8) => {
 
     if (!renderPlanner.isRunning()) {
         bufferPieces.forEach((piece) => {
-            const imageData = ctx.getImageData(
+            const imageData = contex.getImageData(
                 0,
                 piece.start,
-                canvasWidth,
+                canvas.width,
                 piece.height
             );
             imageData.data.set(piece.buffer);
-            ctx.putImageData(imageData, 0, piece.start);
+            contex.putImageData(imageData, 0, piece.start);
         });
 
         bufferPieces.length = 0;
@@ -112,6 +99,6 @@ function startRendering() {
     renderPlanner.start();
 }
 
-document.getElementById("startButtonId")!.addEventListener("click", () => {
+startButton.addEventListener("click", () => {
     startRendering();
 });

@@ -2,8 +2,8 @@ import Vector3 from "./Vector3.js";
 import Scene from "./Scene.js";
 import Sphere from "./Sphere.js";
 
-const MAX_RAY_DEPTH = 1;
 const INFINITY = 1e8;
+const BIAS = 1e-4;
 
 /**
  * Performs ray tracing to render a scene.
@@ -23,17 +23,16 @@ export default class RayTracer {
      * Traces a ray and calculates the color of the pixel.
      * @param {Vector3} rayOrigin - The origin of the ray.
      * @param {Vector3} rayDir - The direction of the ray.
-     * @param {number} depth - The current recursion depth.
      * @returns {Vector3} The color of the pixel.
      */
-    trace(rayOrigin: Vector3, rayDir: Vector3, depth: number): Vector3 {
+    trace(rayOrigin: Vector3, rayDir: Vector3): Vector3 {
+        const elements = this.scene.getElements();
+        const elementsLen = elements.length;
+        const hitInfo = { t0: INFINITY, t1: INFINITY };
+
         let tnear = INFINITY;
         let element: Sphere | null = null;
 
-        const elements = this.scene.getElements();
-        const elementsLen = elements.length;
-
-        const hitInfo = { t0: INFINITY, t1: INFINITY };
         for (let i = 0; i < elementsLen; i++) {
             hitInfo.t0 = INFINITY;
             hitInfo.t1 = INFINITY;
@@ -60,7 +59,6 @@ export default class RayTracer {
             .add(rayDir.clone().multiply(tnear));
         let intersectionNormal = element.getNormal(intersectionPoint);
 
-        const bias = 1e-4;
         let inside = false;
         if (rayDir.dotProduct(intersectionNormal) > 0) {
             intersectionNormal.revert();
@@ -92,7 +90,7 @@ export default class RayTracer {
                                     .add(
                                         intersectionNormal
                                             .clone()
-                                            .multiply(bias)
+                                            .multiply(BIAS)
                                     ),
                                 lightDirection,
                                 lightHitInfo
@@ -169,7 +167,7 @@ export default class RayTracer {
                 const rayDir = new Vector3(xx, yy, -1);
                 rayDir.normalize();
 
-                const pixelColor = this.trace(rayOrigin, rayDir, 0);
+                const pixelColor = this.trace(rayOrigin, rayDir);
 
                 pixelColor.x = Math.min(1, pixelColor.x);
                 pixelColor.y = Math.min(1, pixelColor.y);

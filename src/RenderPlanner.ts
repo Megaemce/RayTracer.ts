@@ -38,7 +38,7 @@ export default class RenderPlanner {
         this.height = height;
         this.running = false;
         this.completedJobs = 0;
-        this.onUpdateReceived = function (sectionStart, sectionHeight, buf8) {};
+        this.onUpdateReceived = () => {};
         this.serializeScene();
 
         for (let i = 0; i < this.jobCount; i++) {
