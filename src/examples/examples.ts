@@ -51,21 +51,15 @@ options.onchange = (event) => {
 
     // Update onclick event handler based on selected option
     start.onclick = () => {
-        // Logic based on selected option
-        switch (value) {
-            case "option1":
-                example1(); // Call example1 function
-                break;
-            case "option2":
-                example2(); // Call example2 function
-                break;
-            case "option3":
-                example3(); // Call example3 function
-                break;
-        }
-    };
+        if (!isAnimationRunning) start.value = "Stop rendering";
+        else start.value = "Start rendering";
 
-    previousValue = value;
+        value === "option1" && example1();
+        value === "option2" && example2();
+        value === "option3" && example3();
+
+        previousValue = value;
+    };
 };
 
 function render() {
@@ -120,83 +114,95 @@ export const example1 = () => {
 };
 
 export const example2 = () => {
-    if (isAnimationRunning) {
-        return;
+    if (!isAnimationRunning) {
+        isAnimationRunning = true;
+        animate();
+    } else {
+        cancelAnimationFrame(animationId);
+        isAnimationRunning = false;
     }
-    isAnimationRunning = true;
-    animate();
 };
 
 export const example3 = () => {
-    renderPlanner = new RenderPlanner(
-        workerCount,
-        scene,
-        backgroundColor,
-        canvas.width,
-        canvas.height
-    );
-    renderPlanner.onUpdateReceived = (sectionStart, sectionHeight, buf8) => {
-        bufferPieces.push({
-            buffer: buf8,
-            start: sectionStart,
-            height: sectionHeight,
-        });
-
-        if (!renderPlanner.isRunning()) {
-            bufferPieces.forEach((piece) => {
-                const imageData = contex.getImageData(
-                    0,
-                    piece.start,
-                    canvas.width,
-                    piece.height
-                );
-                imageData.data.set(piece.buffer);
-                contex.putImageData(imageData, 0, piece.start);
+    if (!isAnimationRunning) {
+        isAnimationRunning = true;
+        renderPlanner = new RenderPlanner(
+            workerCount,
+            scene,
+            backgroundColor,
+            canvas.width,
+            canvas.height
+        );
+        renderPlanner.onUpdateReceived = (
+            sectionStart,
+            sectionHeight,
+            buf8
+        ) => {
+            bufferPieces.push({
+                buffer: buf8,
+                start: sectionStart,
+                height: sectionHeight,
             });
 
-            bufferPieces.length = 0;
+            if (!renderPlanner.isRunning()) {
+                bufferPieces.forEach((piece) => {
+                    const imageData = contex.getImageData(
+                        0,
+                        piece.start,
+                        canvas.width,
+                        piece.height
+                    );
+                    imageData.data.set(piece.buffer);
+                    contex.putImageData(imageData, 0, piece.start);
+                });
 
-            setTimeout(() => {
-                light.center = new Vector3(
-                    10 * Math.sin(Date.now() / 2000),
-                    10,
-                    -30
-                );
-                sphere1.center = new Vector3(
-                    0,
-                    5 * Math.sin(Date.now() / 1000),
-                    -20
-                );
-                sphere2.center = new Vector3(
-                    5,
-                    -1 * Math.sin(Date.now() / 500),
-                    -15
-                );
-                sphere3.center = new Vector3(
-                    5,
-                    6 * Math.cos(Date.now() / 1000),
-                    -25
-                );
-                sphere4.center = new Vector3(
-                    -5.5,
-                    3 * Math.cos(Date.now() / 1000),
-                    -15
-                );
+                bufferPieces.length = 0;
 
-                renderPlanner.updateScene();
-                renderPlanner.start();
+                setTimeout(() => {
+                    light.center = new Vector3(
+                        10 * Math.sin(Date.now() / 2000),
+                        10,
+                        -30
+                    );
+                    sphere1.center = new Vector3(
+                        0,
+                        5 * Math.sin(Date.now() / 1000),
+                        -20
+                    );
+                    sphere2.center = new Vector3(
+                        5,
+                        -1 * Math.sin(Date.now() / 500),
+                        -15
+                    );
+                    sphere3.center = new Vector3(
+                        5,
+                        6 * Math.cos(Date.now() / 1000),
+                        -25
+                    );
+                    sphere4.center = new Vector3(
+                        -5.5,
+                        3 * Math.cos(Date.now() / 1000),
+                        -15
+                    );
 
-                frameCount++;
-                const currentTime = Date.now();
-                if (currentTime - startTime > 1000) {
-                    resultDiv.innerHTML = `Worker Count: ${workerCount} FPS = ${frameCount}`;
-                    startTime = currentTime;
-                    frameCount = 0;
-                }
-            }, 0);
-        }
-    };
+                    renderPlanner.updateScene();
+                    renderPlanner.start();
 
-    renderPlanner.initialize();
-    renderPlanner.start();
+                    frameCount++;
+                    const currentTime = Date.now();
+                    if (currentTime - startTime > 1000) {
+                        resultDiv.innerHTML = `FPS = ${frameCount}. Worker count: ${workerCount} `;
+                        startTime = currentTime;
+                        frameCount = 0;
+                    }
+                }, 0);
+            }
+        };
+
+        renderPlanner.initialize();
+        renderPlanner.start();
+    } else {
+        renderPlanner.stop();
+        isAnimationRunning = false;
+    }
 };
