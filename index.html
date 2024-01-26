@@ -2,27 +2,28 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>RayTracer.ts - Index</title>
+        <title>RayTracer.ts</title>
+        <script type="module" src="./dist/examples/examples.js"></script>
     </head>
     <body>
         <h1>RayTracer.ts</h1>
 
-        Simple ray tracer written in TypeScript with WebWorker support.
+        <select id="switch">
+            <option value="option1">Static render</option>
+            <option value="option2">Animated</option>
+            <option value="option3">Animated with WebWorkers</option>
+        </select>
 
-        <h2>Examples</h2>
-        <ul>
-            <li>
-                <a href="example1.html">Example 1 - Simple Scene [640x480]</a>
-            </li>
-            <li>
-                <a href="example2.html">Example 2 - Animated Scene [320x240]</a>
-            </li>
-            <li>
-                <a href="example3.html"
-                    >Example 3 - Animated Scene with WebWorkers (Multi Threaded)
-                    [320x240]</a
-                >
-            </li>
-        </ul>
+        <input id="start" type="button" value="Start Rendering" />
+
+        <br />
+        <br />
+
+        <canvas id="canvas" width="320" height="240"></canvas>
+
+        <br />
+        <br />
+
+        <div id="result"></div>
     </body>
 </html>

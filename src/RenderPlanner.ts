@@ -72,6 +72,19 @@ export default class RenderPlanner {
     }
 
     /**
+     * Stops all workers.
+     *
+     * @return {void}
+     */
+    stop(): void {
+        this.running = false;
+
+        this.workers.forEach((worker) => {
+            worker.terminate();
+        });
+    }
+
+    /**
      * Serializes the scene elements for distribution to worker threads.
      */
     serializeScene(): void {
