@@ -47,6 +47,8 @@ options.onchange = (event) => {
     previousValue === "option3" && renderPlanner.stop();
     previousValue === "option2" && cancelAnimationFrame(animationId);
 
+    start.value = "Start rendering";
+
     const { value } = event.target as HTMLSelectElement; // Destructuring to get the selected value
 
     // Update onclick event handler based on selected option
