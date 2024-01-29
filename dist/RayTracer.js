@@ -1,10 +1,6 @@
 import Vector3 from "./Vector3.js";
 const INFINITY = 1e8;
 const BIAS = 1e-4;
-function assertIsNumber(value) {
-    if (typeof value !== "number")
-        throw new Error("Not a number");
-}
 /**
  * Performs ray tracing to render a scene.
  */
