@@ -77,8 +77,7 @@ export default class RenderPlanner {
     serializeScene() {
         // serialize scene
         this.serializedElements = [];
-        const elements = this.scene.getElements();
-        elements.forEach((el) => {
+        this.scene.elements.forEach((el) => {
             this.serializedElements.push(el.serialize());
         });
     }

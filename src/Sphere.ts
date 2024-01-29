@@ -53,37 +53,12 @@ export default class Sphere {
     }
 
     /**
-     * Gets the center of the sphere.
-     * @returns {Vector3} The center of the sphere.
-     */
-    getCenter(): Vector3 {
-        return this.center;
-    }
-
-    /**
-     * Gets the radius of the sphere.
-     * @returns {number} The radius of the sphere.
-     */
-    getRadius(): number {
-        return this.radius;
-    }
-
-    /**
-     * Gets the material of the sphere.
-     * @returns {Material} The material of the sphere.
-     */
-    getMaterial(): Material {
-        return this.material;
-    }
-
-    /**
      * Gets the normal vector at a given point on the sphere's surface.
      * @param {Vector3} point - The point on the sphere's surface.
      * @returns {Vector3} The normal vector at the given point.
      */
     getNormal(point: Vector3): Vector3 {
-        const normal = point.clone().subtract(this.getCenter());
-        normal.normalize();
+        const normal = point.clone().subtract(this.center).normalize();
         return normal;
     }
 
@@ -92,8 +67,8 @@ export default class Sphere {
      * @returns {object} The serialized representation of the sphere.
      */
     serialize(): object {
-        const sc = this.material.surfaceColor;
-        const ec = this.material.emissionColor;
+        const surfaceColor = this.material.surfaceColor;
+        const emissionColor = this.material.emissionColor;
         const transparency = this.material.transparency;
         const reflection = this.material.reflection;
 
@@ -101,8 +76,12 @@ export default class Sphere {
             center: [this.center.x, this.center.y, this.center.z],
             radius: this.radius,
             material: {
-                surfaceColor: [sc.x, sc.y, sc.z],
-                emissionColor: [ec.x, ec.y, ec.z],
+                surfaceColor: [surfaceColor.x, surfaceColor.y, surfaceColor.z],
+                emissionColor: [
+                    emissionColor.x,
+                    emissionColor.y,
+                    emissionColor.z,
+                ],
                 transparency: transparency,
                 reflection: reflection,
             },
@@ -115,25 +94,23 @@ export default class Sphere {
      * @returns {Sphere} The deserialized Sphere instance.
      */
     static deserialize(data: any): Sphere {
-        const center = data.center;
+        const [centerX, centerY, centerZ] = data.center;
         const radius = data.radius;
-        const surfaceColor = data.material.surfaceColor;
-        const emissionColor = data.material.emissionColor;
+        const [surfaceColorX, surfaceColorY, surfaceColorZ] =
+            data.material.surfaceColor;
         const transparency = data.material.transparency;
         const reflection = data.material.reflection;
+        const [emissionColorY, emissionColorX, emissionColorZ] =
+            data.material.emissionColor;
 
         return new Sphere(
-            new Vector3(center[0], center[1], center[2]),
+            new Vector3(centerX, centerY, centerZ),
             radius,
             new Material(
-                new Vector3(surfaceColor[0], surfaceColor[1], surfaceColor[2]),
+                new Vector3(surfaceColorX, surfaceColorY, surfaceColorZ),
                 reflection,
                 transparency,
-                new Vector3(
-                    emissionColor[0],
-                    emissionColor[1],
-                    emissionColor[2]
-                )
+                new Vector3(emissionColorX, emissionColorY, emissionColorZ)
             )
         );
     }

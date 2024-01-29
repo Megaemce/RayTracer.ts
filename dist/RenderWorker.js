@@ -47,10 +47,8 @@ messageHandler = rendererMessageHandler;
  * Starts the rendering process.
  */
 function startRendering() {
-    const startTime = new Date();
     const rayTracer = new RayTracer(backgroundColor, scene);
     const buffer = rayTracer.render(rendererWidth, rendererHeight, startY, scanHeight);
-    const endTime = new Date();
     // Send result buffer
     const buf8 = new Uint8ClampedArray(buffer);
     postMessage({

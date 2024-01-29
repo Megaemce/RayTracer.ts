@@ -1,6 +1,10 @@
 import Vector3 from "./Vector3.js";
 const INFINITY = 1e8;
 const BIAS = 1e-4;
+function assertIsNumber(value) {
+    if (typeof value !== "number")
+        throw new Error("Not a number");
+}
 /**
  * Performs ray tracing to render a scene.
  */
@@ -25,7 +29,7 @@ export default class RayTracer {
      * @returns {Vector3} The color of the pixel.
      */
     trace(rayOrigin, rayDir) {
-        const elements = this.scene.getElements();
+        const elements = this.scene.elements;
         const elementsLen = elements.length;
         const hitInfo = { t0: INFINITY, t1: INFINITY };
         let tnear = INFINITY;
@@ -59,13 +63,12 @@ export default class RayTracer {
         }
         for (let i = 0; i < elementsLen; i++) {
             const el = elements[i];
-            const lightMat = el.getMaterial();
+            const lightMat = el.material;
             if (lightMat.emissionColor.x > 0 ||
                 lightMat.emissionColor.y > 0 ||
                 lightMat.emissionColor.z > 0) {
                 const transmission = new Vector3(1, 1, 1);
-                const lightDirection = el
-                    .getCenter()
+                const lightDirection = el.center
                     .clone()
                     .subtract(intersectionPoint);
                 lightDirection.normalize();
@@ -85,14 +88,13 @@ export default class RayTracer {
                     }
                 }
                 const lightRatio = Math.max(0, intersectionNormal.dotProduct(lightDirection));
-                surfaceColor.add(element
-                    .getMaterial()
-                    .surfaceColor.clone()
+                surfaceColor.add(element.material.surfaceColor
+                    .clone()
                     .product(transmission)
                     .product(lightMat.emissionColor.clone().multiply(lightRatio)));
             }
         }
-        surfaceColor.add(element.getMaterial().emissionColor);
+        surfaceColor.add(element.material.emissionColor);
         return surfaceColor;
     }
     /**

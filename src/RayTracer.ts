@@ -26,7 +26,7 @@ export default class RayTracer {
      * @returns {Vector3} The color of the pixel.
      */
     trace(rayOrigin: Vector3, rayDir: Vector3): Vector3 {
-        const elements = this.scene.getElements();
+        const elements = this.scene.elements;
         const elementsLen = elements.length;
         const hitInfo = { t0: INFINITY, t1: INFINITY };
 
@@ -67,15 +67,14 @@ export default class RayTracer {
 
         for (let i = 0; i < elementsLen; i++) {
             const el = elements[i];
-            const lightMat = el.getMaterial();
+            const lightMat = el.material;
             if (
                 lightMat.emissionColor.x > 0 ||
                 lightMat.emissionColor.y > 0 ||
                 lightMat.emissionColor.z > 0
             ) {
                 const transmission = new Vector3(1, 1, 1);
-                const lightDirection = el
-                    .getCenter()
+                const lightDirection = el.center
                     .clone()
                     .subtract(intersectionPoint);
                 lightDirection.normalize();
@@ -110,9 +109,8 @@ export default class RayTracer {
                 );
 
                 surfaceColor.add(
-                    element
-                        .getMaterial()
-                        .surfaceColor.clone()
+                    element.material.surfaceColor
+                        .clone()
                         .product(transmission)
                         .product(
                             lightMat.emissionColor.clone().multiply(lightRatio)
@@ -121,7 +119,7 @@ export default class RayTracer {
             }
         }
 
-        surfaceColor.add(element.getMaterial().emissionColor);
+        surfaceColor.add(element.material.emissionColor);
         return surfaceColor;
     }
 

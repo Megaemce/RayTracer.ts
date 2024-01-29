@@ -11,13 +11,6 @@ export default class Scene {
         this.elements.push(element);
     }
     /**
-     * Gets all elements in the scene.
-     * @returns {Sphere[]} An array containing all elements in the scene.
-     */
-    getElements() {
-        return this.elements;
-    }
-    /**
      * Clears all elements from the scene.
      */
     clear() {
