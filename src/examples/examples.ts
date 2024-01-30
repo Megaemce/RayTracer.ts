@@ -22,7 +22,6 @@ interface BufferPiece {
     height: number;
 }
 
-const bufferPieces: BufferPiece[] = [];
 const workerCount = 8;
 
 let startTime = Date.now();
@@ -33,6 +32,7 @@ let frameCount = 0;
 let animationId: number;
 let previousValue = ""; // Variable to store the previous value of select
 let renderPlanner: RenderPlanner;
+let bufferPieces: BufferPiece[] = [];
 
 start.onclick = () => example1();
 options.onchange = (event) => {
@@ -76,23 +76,16 @@ function render() {
 function animate() {
     // Update positions only if enough time has passed
     const currentTime = Date.now();
-    const updateInterval = 50; // Update the scene at 20 FPS (50ms per update)
 
     animationId = requestAnimationFrame(animate); // Use requestAnimationFrame for the animation loop
 
-    if (currentTime - lastUpdateTime > updateInterval) {
-        light.center = new Vector3(10 * Math.sin(currentTime / 2000), 10, -30);
-        sphere1.center = new Vector3(0, 5 * Math.sin(currentTime / 1000), -20);
-        sphere2.center = new Vector3(5, -1 * Math.sin(currentTime / 500), -15);
-        sphere3.center = new Vector3(5, 6 * Math.cos(currentTime / 1000), -25);
-        sphere4.center = new Vector3(
-            -5.5,
-            3 * Math.cos(currentTime / 1000),
-            -15
-        );
+    light.center = new Vector3(10 * Math.sin(currentTime / 2000), 10, -30);
+    sphere1.center = new Vector3(0, 5 * Math.sin(currentTime / 1000), -20);
+    sphere2.center = new Vector3(5, -1 * Math.sin(currentTime / 500), -15);
+    sphere3.center = new Vector3(5, 6 * Math.cos(currentTime / 1000), -25);
+    sphere4.center = new Vector3(-5.5, 3 * Math.cos(currentTime / 1000), -15);
 
-        lastUpdateTime = currentTime;
-    }
+    lastUpdateTime = currentTime;
 
     // Render the frame
     render();
@@ -158,9 +151,9 @@ export const example3 = () => {
                     contex.putImageData(imageData, 0, piece.start);
                 });
 
-                bufferPieces.length = 0;
+                bufferPieces = [];
 
-                setTimeout(() => {
+                requestAnimationFrame(() => {
                     light.center = new Vector3(
                         10 * Math.sin(Date.now() / 2000),
                         10,
@@ -197,7 +190,7 @@ export const example3 = () => {
                         startTime = currentTime;
                         frameCount = 0;
                     }
-                }, 0);
+                });
             }
         };
 
