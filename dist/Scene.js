@@ -5,7 +5,7 @@ export default class Scene {
     elements = [];
     /**
      * Adds an element to the scene.
-     * @param {*} element - The element to add.
+     * @param {Sphere} element - The element to add.
      */
     add(element) {
         this.elements.push(element);
