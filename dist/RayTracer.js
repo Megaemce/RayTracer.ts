@@ -1,5 +1,4 @@
 import Vector3 from "./Vector3.js";
-const INFINITY = 1e8;
 const BIAS = 1e-4;
 /**
  * Performs ray tracing to render a scene.
@@ -26,13 +25,12 @@ export default class RayTracer {
      */
     trace(rayOrigin, rayDir) {
         const elements = this.scene.elements;
-        const elementsLen = elements.length;
-        const hitInfo = { t0: INFINITY, t1: INFINITY };
-        let tnear = INFINITY;
+        const hitInfo = { t0: Infinity, t1: Infinity };
+        let tnear = Infinity;
         let element = null;
-        for (let i = 0; i < elementsLen; i++) {
-            hitInfo.t0 = INFINITY;
-            hitInfo.t1 = INFINITY;
+        for (let i = 0; i < elements.length; i++) {
+            hitInfo.t0 = Infinity;
+            hitInfo.t1 = Infinity;
             const el = elements[i];
             if (el.intersect(rayOrigin, rayDir, hitInfo)) {
                 if (hitInfo.t0 < 0) {
@@ -57,7 +55,7 @@ export default class RayTracer {
             intersectionNormal.revert();
             inside = true;
         }
-        for (let i = 0; i < elementsLen; i++) {
+        for (let i = 0; i < elements.length; i++) {
             const el = elements[i];
             const lightMat = el.material;
             if (lightMat.emissionColor.x > 0 ||
@@ -68,8 +66,8 @@ export default class RayTracer {
                     .clone()
                     .subtract(intersectionPoint);
                 lightDirection.normalize();
-                const lightHitInfo = { t0: INFINITY, t1: INFINITY };
-                for (let j = 0; j < elementsLen; j++) {
+                const lightHitInfo = { t0: Infinity, t1: Infinity };
+                for (let j = 0; j < elements.length; j++) {
                     if (i !== j) {
                         if (elements[j].intersect(intersectionPoint
                             .clone()
@@ -108,14 +106,14 @@ export default class RayTracer {
         if (scanHeight === undefined) {
             scanHeight = height;
         }
-        const colorDepth = 4;
+        const colorDepth = 4; // create buffer, 4 bytes for 1 pixel, r, g, b, and alfa
         const buffer = new ArrayBuffer(width * scanHeight * colorDepth);
         const bufferView = new Uint32Array(buffer);
         const invWidth = 1 / width;
         const invHeight = 1 / height;
-        const fov = 30;
+        const fieldOfView = 30;
         const aspectRatio = width / height;
-        const angle = Math.tan((Math.PI * 0.5 * fov) / 180);
+        const angle = Math.tan((Math.PI * 0.5 * fieldOfView) / 180);
         const rayOrigin = new Vector3(0, 0, 0);
         let pixelIndex = 0;
         for (let y = startY; y < startY + scanHeight; ++y) {
@@ -131,7 +129,11 @@ export default class RayTracer {
                 const r = Math.round(pixelColor.x * 255);
                 const g = Math.round(pixelColor.y * 255);
                 const b = Math.round(pixelColor.z * 255);
-                bufferView[pixelIndex] = (255 << 24) | (b << 16) | (g << 8) | r;
+                bufferView[pixelIndex] =
+                    (255 << 24) | // alpha
+                        (b << 16) | // blue
+                        (g << 8) | // green
+                        r; // red
             }
         }
         return buffer;
